@@ -110,6 +110,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 🤝 Contributing
 MOSA is built on the principle of "Self-Evolution". If you find a new best practice, record it using `auto-skill` and submit a Pull Request.
-
+Credit to: Toolsai[https://github.com/Toolsai/auto-skill]
 ---
 *Powered by DeepMind Advanced Agentic Coding Logic.*
