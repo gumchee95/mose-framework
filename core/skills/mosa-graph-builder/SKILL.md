@@ -1,17 +1,17 @@
 ---
 name: mosa-graph-builder
-description: "Graphify Connector：初始化及更新項目的知識圖譜 (Knowledge Graph)。用於構建 God nodes、尋找意外連接，並量產 Community Wiki。遇到陌生龐大 codebase 或需可視化架構時主動調用。"
+description: "Topology Generator：透過本地讀取取代 LLM，在目標資料夾內產生原生的 Mermaid 知識圖譜 (Knowledge Graph)。負責視覺化架構結構與部署 Token 護盾。遇到陌生龐大 codebase 或需可視化架構時主動調用。"
 skill_id: MOSA_GRAPH_BUILDER
 category: Discovery
 ---
 
-# MOSA Graph Builder (拓撲知識庫構建器)
+# MOSA Graph Builder (純淨拓撲知識庫構建器)
 
 ## 0. 元邏輯 (Meta-Logic)
 
-這是一個輔助探索的 Execution Skill (Layer C Sub-Agent)，其核心目標是透過調用 `graphify` 來將靜態源碼和多模態資產轉變為高密度、可追蹤的圖譜指標。它不涉及具體的代碼重構，專注於提供結構洞察（God nodes、意外連接與 Communities）。
+這是一個輔助探索的 Execution Skill (Layer C Sub-Agent)，其核心目標是**免呼叫外部 LLM API (Zero External API Cost)**，純粹依靠 Agent 自體的 `list_dir` 能力與理解力，將目標源碼轉變為高密度、視覺化的 Mermaid 圖譜指標。
 
-當 Orchestrator Agent 或用戶面臨龐大的 codebase，或想要全量把控系統架構、需要產生維基指南時，即可呼叫本 Skill 執行探索。
+當 Orchestrator Agent 或用戶面臨龐大的 codebase，想要全量把控系統架構、需要明確的視覺圖譜時，即可呼叫本 Skill。
 
 ---
 
@@ -23,15 +23,14 @@ category: Discovery
    - 確保已鎖定當前 `{Workspace_Root}`（根據 `00_System` 的位置向上推導）。
    - 禁止在 `C:\Users\...` 級別硬編碼，所有路徑操作須基於當前指向的 Sibling Scope。
 
-2. **圖譜構建 (Run Graphify)**
-   - **[Tool: run_command]** 執行圖譜生成指令：
-     - 若需要默認深度分析且用戶無特指，則對整個項目或目標路徑執行：`graphify ./`
-     - 若用戶希望生成 Obsidian/Wiki 供後續文件檢索，則附加參數：`graphify ./ --wiki` 或是 `graphify ./ --obsidian`
-   - 等待處理完成（包含 AST 提取與 LLM 語義推斷。如有必要，提醒用戶可能會發生 API 調用，確認 token allowance）。
+2. **圖譜構建 (Native Mermaid Topology)**
+   - **[Tool: list_dir]** Agent 直接分析目標 `Workspace` 目錄。
+   - **拓撲判定與圖譜繪製**：親自依據資料夾特徵（如 `00_System`, `01_Work`, `src` 或核心的長檔名文件、PDF）判定誰是 God nodes 核心。
+   - **[Tool: write_to_file]** 將推斷出來的結構，使用最高品質 Markdown 的 `mermaid` 語法 (`graph TD` 或 `graph LR`)，寫出到 `{Workspace_Root}/graphify-out/GRAPH_REPORT.md` (路徑中的資料夾若不存在將自動生成)。
+   - **要求**：GRAPH_REPORT.md 必須附帶文字的上帝視角總結，點明核心執行檔在哪、社群之間的關聯。
 
 3. **產出物校驗 (Validation)**
-   - **[Tool: view_file]** 若終端成功執行，驗證對應的 `{Workspace_Root}/graphify-out/GRAPH_REPORT.md` 是否已經產生。
-   - 若指令附帶 wiki 生成，請進一步檢查 `{Workspace_Root}/graphify-out/wiki/index.md`。
+   - 確認 `{Workspace_Root}/graphify-out/GRAPH_REPORT.md` 已確實將複雜的程式資料夾結構繪製為美人魚 (Mermaid) 流程圖。
 
 4. **注入 Token Shield (Rules 同步)**
    - **[Tool: write_to_file]** 必須在當前 Workspace (`{Workspace_Root}/`) 新增或覆蓋 `AGENTS.md` (Token 護盾協議檔案)，以強制全局約束，內容如下：
@@ -40,10 +39,9 @@ category: Discovery
      When querying architecture, relationships, or tracing logic:
      1. DO NOT read raw code files or use global grep initially.
      2. MUST read `graphify-out/GRAPH_REPORT.md` first to understand God nodes and Context.
-     3. For deep tracing, use `graphify query` or navigate by the generated knowledge graph.
+     3. For deep tracing, you can navigate by following the Mermaid nodes in the report.
      ```
-   - 此步驟確保未來任何 Assistant 啟動此工作空間時均會遵守圖譜優先原則。
 
 5. **狀態交接與指針固化 (State Handoff)**
-   - 將產出的拓撲報告路徑指示、發現的核心 God nodes 數量，以 **ff 模式** 短字串寫進 `task_results.md`。
-   - 完成後主動退出交還控制權，嚴禁替代 Orchestrator Agent 決定下一步行動。
+   - 將產出的拓撲報告路徑指示，以 **ff 模式** 短字串寫進 `task_results.md`。
+   - 完成後主動退出交還控制權。
