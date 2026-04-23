@@ -14,8 +14,8 @@ complexity: "Medium"
 - **動態定價邏輯**：使用 Ultra Early Bird、Early Bird 與定價觸發機制（Inventory-based price jump）優化現金流。
 - **黑天鵝與風險應對**：針對 Wi-Fi、電力、嘉賓缺席與現場抗議建立具體的緩解策略 (Mitigation Strategy)。
 - **核心連結集**：
-    - [Master SOP](file:///c:/Users/USER/Desktop/operation/event_pipeline.md)
-    - [SOP & Pricing](file:///c:/Users/USER/Desktop/operation/sop_planning_and_pricing.md)
-    - [Manpower & HR](file:///c:/Users/USER/Desktop/operation/manpower_and_hr_manual.md)
-    - [Finance & Sponsorship](file:///c:/Users/USER/Desktop/operation/finance_and_sponsorship_manual.md)
-    - [Programme Flow & ROS](file:///c:/Users/USER/Desktop/operation/programme_flow_and_ros.md)
+    - [Master SOP](file:///[WORKSPACE_ROOT]/operation/event_pipeline.md)
+    - [SOP & Pricing](file:///[WORKSPACE_ROOT]/operation/sop_planning_and_pricing.md)
+    - [Manpower & HR](file:///[WORKSPACE_ROOT]/operation/manpower_and_hr_manual.md)
+    - [Finance & Sponsorship](file:///[WORKSPACE_ROOT]/operation/finance_and_sponsorship_manual.md)
+    - [Programme Flow & ROS](file:///[WORKSPACE_ROOT]/operation/programme_flow_and_ros.md)
