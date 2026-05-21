@@ -10,28 +10,60 @@
 
 **MOSA (Markdown-Oriented Skill Architecture)** is a paradigm-shifting orchestration framework designed to run multi-agent, context-heavy AI systems efficiently.
 
-Tired of AI agents forgetting context, repeating full codebases, and hitting token limits? MOSA solves this. By treating agents as pure "SOP Execution Machines" and passing only **pointers** (file paths) instead of raw data, MOSA drastically reduces token bloat while scaling infinite capabilities through modular Markdown skills.
-
-### Why Choose MOSA?
-- **Pointers Only**: No more token spillage. Agents pass data through `session_state.json` and file paths instead of dumping massive tables into the chat.
-- **Token Shielding**: Utilizes knowledge graphs (`GRAPH_REPORT.md`) to restrict agents from aimless full-directory scanning. Saves 30-50% in token consumption!
-- **Auto-Evolution**: Built-in `auto-skill` ensures the framework continuously extracts generalized experience and creates its own SOPs over time.
-- **Strict Role Boundaries**: The Orchestrator plans, the Router matches skills, and Execution Sub-Agents (Coder, Admin, Market, etc.) simply *execute*.
+By treating agents as pure "SOP Execution Machines" and passing only **pointers** (file paths) instead of raw data, MOSA drastically reduces token bloat while scaling infinite capabilities through modular Markdown skills.
 
 ---
 
-## 🧠 The Architecture (Layer by Layer)
+## 🧩 The MOSA Workflow (Diagram)
 
-MOSA is structured into highly cohesive, loosely coupled layers:
+Below is the execution topology and how the different components interact within the MOSA ecosystem.
 
-*   **Layer A (Global Protocols):** Dictated by `GEMINI.md`. This is the constitutional rulebook handling workspace isolation and startup sequences.
-*   **Layer B (Routing Engine):** The Router Agent maps user intents to the best 1-3 Markdown skills out of hundreds without reading all of them (using Mosa Skeleton search).
-*   **Layer C (Execution Sub-Agents):** SOP-driven specialists.
-    *   `admin_agent` (HR, Ops, Workflow)
-    *   `coder_agent` (Python, SQL, Technical tests)
-    *   `market_agent` (Finance, Macro, Buy-side)
-    *   `design_agent` (Frontend, Canvas, UX)
-*   **Layer D (Persistence & Shielding):** Orchestrator limits agents to the current `00_System` workspace, strictly garbage-collecting temporary state JSONs upon task completion.
+```mermaid
+graph TD
+    User(("🧑 User Request")) --> Host["💻 Host Agent (Context Sniffing)"]
+    Host -- Checks rules --> GEMINI["📜 GEMINI.md (Global Rules)"]
+    Host --> Orch["🧠 Orchestrator Agent (Layer A/B)"]
+    
+    subgraph Routing & Delegation
+        Orch -- "Intent & Keywords" --> Router["🧭 Router Agent"]
+        Router -- "Queries" --> Registry[("🗂️ skills_registry.json")]
+        Router -- "Returns Pointers" --> Orch
+    end
+
+    subgraph Execution (Layer C)
+        Orch -- "Delegates SOP" --> Coder["👨‍💻 Coder Agent"]
+        Orch -- "Delegates SOP" --> Admin["💼 Admin Agent"]
+        Orch -- "Delegates SOP" --> Design["🎨 Design Agent"]
+        Orch -- "Delegates SOP" --> Market["📈 Market Agent"]
+    end
+    
+    subgraph Evolution & Maintenance
+        Auto["⚙️ Auto-Skill"] -- "Extracts Experience" --> KB[("📚 Knowledge Base")]
+        Creator["🏗️ Skill-Creator & Architect"] -- "Builds New Skills" --> SkillsDir["📂 skills/"]
+        Distiller["🗜️ Registry Distiller"] -- "Compiles & Updates" --> Registry
+    end
+
+    Coder & Admin & Design & Market --> Auto
+```
+
+---
+
+## 🏗️ The Skill Factory: Building & Maintaining the Ecosystem
+
+MOSA isn't just about executing tasks; it's designed to **build itself**. The following components handle the creation, architecture, and registry maintenance of the skills.
+
+### 🗜️ Registry Distiller (`base-distiller`)
+The **Registry Distiller** is the indexer of the ecosystem. As new skills are dynamically added, the distiller automatically parses the `skills/` directory and compiles/updates the central `skills_registry.json`. 
+- **How it works**: It distills all the YAML frontmatter (Skill ID, Description, Category, Dependencies) from every `SKILL.md` file and condenses them into a highly-efficient, single JSON file. This allows the Router Agent to instantly find the right skill without spending tokens reading every single markdown file.
+
+### 🏛️ Skill Architect
+Before writing code, the **Skill Architect** acts as the system design layer. It uses Google Cloud's core design patterns (Tool Wrapper, Generator, Reviewer, Inversion, Pipeline) to architect high-quality, composable, and token-efficient Agent Skills. It ensures that new skills fit perfectly into the MOSA pointer-passing architecture.
+
+### 🛠️ Skill Creator
+Once the architecture is decided, the **Skill Creator** scaffolds the actual skill. It automates the boilerplate setup, applying Anthropic's official best practices with zero manual configuration. It handles:
+- Creating the `SKILL.md` with correct YAML frontmatter.
+- Setting up the `scripts/`, `references/`, and `assets/` directories.
+- Registering the skill so the Distiller can pick it up.
 
 ---
 
@@ -42,28 +74,17 @@ Imagine asking your AI: *"Analyze the Q3 financials and generate a dashboard moc
 Here is how MOSA elegantly handles this complex, multi-domain task:
 
 1.  **Context Sniffing**: The system checks if it has the global rules loaded. It spins up the **Orchestrator Agent**.
-2.  **Atomic Decomposition**: The Orchestrator breaks down the prompt into: 
-    - `[Financial Analysis]`
-    - `[Dashboard UI Mockup]`
-3.  **Smart Routing**: The Orchestrator pings the **Router Agent**. The Router matches the keywords to `/market_agent` for financials, and `/design_agent` for the mockup.
+2.  **Atomic Decomposition**: The Orchestrator breaks down the prompt into `[Financial Analysis]` and `[Dashboard UI Mockup]`.
+3.  **Smart Routing**: The Orchestrator pings the **Router Agent**, which quickly checks the `skills_registry.json` (maintained by the Distiller) to match the keywords to `/market_agent` and `/design_agent`.
 4.  **Cooperative Delegation**:
-    - The Orchestrator assigns the financial task to `market_agent`. `market_agent` runs the analysis, saves a CSV, and writes the *pointer* to `session_state.json`.
-    - Next, the Orchestrator assigns the UI task to `design_agent`, passing the *pointer* to the CSV. `design_agent` reads the CSV and drafts a beautiful dashboard component.
-5.  **Audit & Wrap-Up**: The `audit_agent` optionally reviews the output. Finally, `auto-skill` prompts: *"I noticed you used a unique chart configuration. Should I save this experience for next time?"*
-
-**Result**: A perfect, specialized execution pipeline—all without dropping context or consuming excessive tokens!
+    - `market_agent` runs the analysis, saves a CSV, and writes the *pointer* to `session_state.json`.
+    - `design_agent` reads the pointer to the CSV and drafts a beautiful dashboard component.
+5.  **Audit & Wrap-Up**: `auto-skill` prompts: *"I noticed you used a unique chart configuration. Should I save this experience for next time?"* If it's a massive breakthrough, it triggers **Skill Architect** to mint a brand new skill!
 
 ---
 
 ## 🛠️ Getting Started
 
-To initialize MOSA in your environment:
-
 1. **Bootstrap Workspace**: In any directory, run the initialization to generate `00_System`, `01_Work`, and `02_Output`.
-2. **Load the Meta-Logic**: Ensure `skills/auto-skill/SKILL.md` is loaded into context.
-3. **Trigger the Orchestrator**: Just give a complex prompt, and let the Orchestrator seamlessly break it down and trigger the routing sequence.
-
----
-<div align="center">
-  <p>Built with ❤️ for High-Performance Autonomous Agents.</p>
-</div>
+2. **Compile Registry**: Run the `Registry Distiller` to generate your initial `skills_registry.json`.
+3. **Trigger the Orchestrator**: Give a complex prompt, and let the Orchestrator seamlessly break it down!
