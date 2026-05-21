@@ -1,7 +1,7 @@
 ---
 name: Registry Distiller
 description: A standalone utility for redefining and distilling the core Antigravity registries (Skills, Knowledge, and Experience). Independent of the MOSA framework.
-skill_id: BASE_DISTILLER
+skill_id: REGISTRY_DISTILLER
 category: Core
 ---
 
@@ -14,9 +14,7 @@ This skill is designed as a standalone "Registry Hardening" utility. It analyzes
 ### 1. 職能註冊表校準 (Skills Registry Distillation)
 
 - **路徑驗證**: 檢查 `skills_registry.json` 中定義的所有 `filepath` 是否確實存在於磁碟。
-- **標籤標準化 (Tag Normalization)**: 識別拼寫相近、大小寫不一或語義重疊的標籤。
-- **重複技能整合 (Suite Consolidation)**: 識別相似或關聯的技能群組，將其重構整合為「主套件 (Master Suite)」並將子技能轉移至 `references/` 資料夾，以減少全域註冊表體積。
-- **標籤衝突修剪 (Tag Collision Pruning)**: 自動辨識並修剪過度重疊的標籤，確保全域註冊表之標籤重疊率低於 50%（或零衝突）。
+- **標籤標準化 (Tag Normalization)**: 識別拼寫相近、大小寫不一或語義重疊的標籤（例如 `code-review` 與 `code-reviewing`）。
 - **孤件清理 (Orphan Cleanup)**: 識別磁碟中有但 registry 沒登記的技能，或 registry 登記但磁碟消失的技能。
 
 ### 2. 知識庫索引精煉 (Knowledge-Base Refinement)

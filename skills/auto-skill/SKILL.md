@@ -33,12 +33,6 @@ category: Core
 * **寫放分離 (Decoupling)**: 過程數據寫入 `session_state.json`，Artifact 僅保留核心決策。
 * **定期快照**: 當任務階段完成時，主動進行計畫歸檔與 `prompt_stack.md` 成就固化。
 
-### D. 技能晉升協議 (Skill Promotion Protocol)
-
-* **核心目標**: 防止高品質架構碎片化。
-* **觸發條件**: 當 `auto-skill` 識別到「可重複使用的架構」、「複雜多步工作流」或「標準化模板」時。
-* **聯動機制**: 嚴禁直接在 `knowledge-base` 隨意寫入複雜邏輯。必須啟動 `skill-creator` 流程，按照其「Anatomy of a Skill」規範進行模組化拆解（references/, assets/）。
-
 ---
 
 ## 核心循環（Step 1–5）
@@ -124,9 +118,8 @@ category: Core
 
 4. **執行記錄**：用戶同意後，依下列規則寫入並更新索引：
 
-    * **跨技能經驗**：若本回合使用非 auto-skill，且該技能在 experience 中不存在或有新技巧 → 寫入 `experience/skill-[skill-id].md`，更新 `experience/_index.json`
-    * **一般知識**：若為通用流程/偏好/解法 → 寫入 `knowledge-base/[category].md`，更新 `knowledge-base/_index.json`
-    * **🔥 技能晉升 (New Skill)**：若發現本次解決方案具有高度重用價值（如新的專案框架、複雜工具集成）→ **強制呼叫 `skill-creator`** 進行正式技能建模，嚴禁僅以 .md 檔案形式存放在知識庫。
+   * **跨技能經驗**：若本回合使用非 auto-skill，且該技能在 experience 中不存在或有新技巧 → 寫入 `experience/skill-[skill-id].md`，更新 `experience/_index.json`
+   * **一般知識**：若為通用流程/偏好/解法 → 寫入 `knowledge-base/[category].md`，更新 `knowledge-base/_index.json`
 
 **強制規則：缺少經驗時必問**
 若本回合使用了非 auto-skill 技能，且該技能不在 `experience/_index.json`：

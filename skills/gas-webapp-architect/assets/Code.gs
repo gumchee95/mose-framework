@@ -6,7 +6,7 @@ const SHEET_NAME = "Sheet1";
 // ==========================================
 function doGet(e) {
   return HtmlService.createHtmlOutputFromFile('Index')
-    .setTitle('UTAR Car Sticker Collection System')
+    .setTitle('Car Sticker Collection System')
     .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
     .addMetaTag('viewport', 'width=device-width, initial-scale=1');
 }
@@ -160,7 +160,7 @@ function generateAndSendReport() {
       MailApp.sendEmail({
         to: adminEmail,
         subject: "📊 Daily Sticker Collection Report",
-        body: reportText + "\n\nThis is an automated report generated from the UTAR Sticker System."
+        body: reportText + "\n\nThis is an automated report generated from the Sticker System."
       });
       SpreadsheetApp.getActiveSpreadsheet().toast("Report sent to " + adminEmail, "Success");
     } catch (e) {}

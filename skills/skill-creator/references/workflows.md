@@ -1,3 +1,9 @@
+---
+skill_id: "REFERENCES"
+category: "Core"
+tags: []
+complexity: "Medium"
+---
 # Workflow Patterns
 
 ## Sequential Workflows

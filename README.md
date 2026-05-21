@@ -48,6 +48,48 @@ graph TD
 
 ---
 
+## 💾 The Shared Memory Bus: `context_bus.json`
+
+To prevent massive token bloat during multi-agent handoffs, MOSA implements a stateless **Shared Memory Bus** (`01_Work/context_bus.json`).
+
+### How It Works
+
+Instead of feeding an agent the entire historical chat context of what other agents did, agents output structured JSON values (such as file pointers, configuration metrics, schema definitions).
+
+1. **Write**: When an Execution Sub-Agent (e.g., `market_agent`) finishes its task, the **Orchestrator** extracts its output variables and writes them to `01_Work/context_bus.json`.
+2. **Read & Inject**: When the Orchestrator assigns a task to the next agent in the pipeline (e.g., `design_agent`), it reads `context_bus.json` and injects it as a compact `[Shared_Context: ...]` header.
+3. **Pointers Only**: Large data outputs (like large tables or code snippets) are saved to disk, and only their file path pointers are put on the bus.
+
+### Concrete Example of `context_bus.json`
+
+During a typical cooperative task (like planning a corporate event), the `context_bus.json` evolves step-by-step:
+
+```json
+{
+  "project_scope": {
+    "event_type": "Gala Dinner",
+    "attendees": 200,
+    "budget_regime": "Break-Even",
+    "milestones_path": "01_Work/milestones.json"
+  },
+  "marketing_strategy": {
+    "psychology_hook": "Loss Aversion / Early Bird Exclusivity",
+    "theme": "Vibrant Neon Classic",
+    "copywriting_draft_path": "01_Work/marketing_copy.md"
+  },
+  "technical_infrastructure": {
+    "database_schema": {
+      "attendee_table": ["ID", "Name", "TicketType", "SerialNo", "CheckInTime"]
+    },
+    "script_path": "01_Work/registration_sync.js"
+  }
+}
+```
+
+By reading this small, structured JSON (~400 tokens), the `design_agent` immediately knows it must render a mockup matching the "Vibrant Neon Classic" theme for a "Gala Dinner" accommodating "200 attendees", without having to read the thousands of tokens of discussion between the user, the project planner, and the marketing agent!
+
+---
+
 ## 🏗️ The Skill Factory: Building & Maintaining the Ecosystem
 
 MOSA isn't just about executing tasks; it's designed to **build itself**. The following components handle the creation, architecture, and registry maintenance of the skills.
@@ -71,11 +113,6 @@ Once the architecture is decided, the **Skill Creator** scaffolds the actual ski
 
 A core component of MOSA is its **Truth Function**—an embedded verification and auditing layer that ensures the framework operates at peak token efficiency and maintains architectural integrity across complex, multi-agent tasks.
 
-### Networked Intelligence & Context Bus
-Instead of isolated agents chatting endlessly, MOSA creates a **Cooperative Capability Graph (DAG)**. 
-- Agents communicate via the `context_bus.json` (a shared memory bus).
-- **Example**: If the prompt is ambiguous (e.g., "Plan an event"), the Router uses the *Inversion Pattern* to extract exact variables (e.g., 200 pax, Break-Even Budget). These variables are written to the `context_bus.json` and automatically injected into subsequent downstream agents (Marketing, Tech, Finance) so they inherently inherit the exact same context parameters without needing to re-read the original prompt history.
-
 ### Verifiable Token Optimization
 The Truth Function mathematically audits system efficiency. By using the Context Bus and the Token Shield (`GRAPH_REPORT.md`), MOSA achieves massive savings over traditional agents:
 - **Workspace Init**: ~75% Token Savings (Agents read `GRAPH_REPORT.md` God Nodes instead of full-directory scans).
@@ -90,7 +127,7 @@ The `audit-agent` serves as the Chief Compliance Officer. It actively monitors t
 
 ---
 
-## 🎬 How it Works (Marketing Example)
+## 🎬 How it Works (Cooperative Execution Example)
 
 Imagine asking your AI: *"Analyze the Q3 financials and generate a dashboard mockup."*
 
@@ -99,9 +136,9 @@ Here is how MOSA elegantly handles this complex, multi-domain task:
 1.  **Context Sniffing**: The system checks if it has the global rules loaded. It spins up the **Orchestrator Agent**.
 2.  **Atomic Decomposition**: The Orchestrator breaks down the prompt into `[Financial Analysis]` and `[Dashboard UI Mockup]`.
 3.  **Smart Routing**: The Orchestrator pings the **Router Agent**, which quickly checks the `skills_registry.json` (maintained by the Distiller) to match the keywords to `/market_agent` and `/design_agent`.
-4.  **Cooperative Delegation**:
-    - `market_agent` runs the analysis, saves a CSV, and writes the *pointer* to `session_state.json`.
-    - `design_agent` reads the pointer to the CSV and drafts a beautiful dashboard component.
+4.  **Cooperative Delegation & Context Bus Handoff**:
+    - `market_agent` runs the analysis, saves a CSV, and writes the *pointer* to `session_state.json` and output details to `context_bus.json` (`{"financial_report": "01_Work/q3_financials.csv"}`).
+    - `design_agent` reads the pointer from `context_bus.json` and drafts a beautiful dashboard component matching the financial numbers.
 5.  **Audit & Wrap-Up**: `auto-skill` prompts: *"I noticed you used a unique chart configuration. Should I save this experience for next time?"* If it's a massive breakthrough, it triggers **Skill Architect** to mint a brand new skill!
 
 ---

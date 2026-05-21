@@ -68,15 +68,13 @@ category: Workflow
 4. **任務規劃**  
    - **[Tool: write_to_file]** 生成或更新 `01_Work/task.md` 與 `implementation_plan.md`（僅寫入變更部分，ff 模式）。
 
-5. **路由檢索與依賴解析 (Dependency Resolution)**  
+5. **路由檢索**  
    - 將解構後的意圖傳給 `@router_agent`，指令格式：`[Load Skill Request: <用戶意圖摘要>]`。  
-   - 等待 router_agent 返回技能路徑列表後，**必須讀取 `skills_registry.json`** 以解析該技能之 `dependencies.requires` 與 `dependencies.suggests`。
-   - 若存在依賴技能，Orchestrator 自動將其組裝為**協同執行圖 (Cooperative Capability Graph)**，決定執行的優先順序。
+   - 等待 router_agent 返回技能路徑列表。
 
-6. **網絡協同分發與 Context Sharing (Context Bus)**  
-   - 依序派發協同執行圖中的 Skill SOP 給對應的 Execution Sub-Agent。
-   - 每個 Sub-Agent 執行完畢後，Orchestrator 提取其輸出變數寫入 `01_Work/context_bus.json`。
-   - 在派發後續 Sub-Agent 時，**必須**讀取 `context_bus.json` 並作為指令前置上下文 `[Shared_Context: ...]` 傳入，實現跨技能網絡協同。
+6. **技能加載與分發**  
+   - 一次僅派發 **一份** Skill SOP 給對應 Execution Sub-Agent。  
+   - 附加指令：`[Load Skill: <完整相對路徑>]`。
 
 7. **執行監督與審核（觸發條件見 GEMINI.md §審計觸發規則）**  
    - **強制觸發**：涉及 ≥5 文件寫入 / [Critical] 任務 / 連續 2 次 [Status: Fail] / 用戶要求。  
@@ -90,13 +88,6 @@ category: Workflow
    - **Phase 2: 經驗抽取 (Experience Extraction)** 確認 `auto-skill` Step 5 已觸發。檢視本輪任務是否有可復用的通用經驗（如報錯解法、特定參數），並將其寫入 `knowledge-base/` 或 `experience/`。
 
    - **Phase 3: 狀態銷毀與物理隔離 (State GC)** **[Tool: write_to_file]** 將 `01_Work/` 內的最終交付物完整移至 `02_Output/`。最後，徹底清空並重置 `01_Work/session_state.json`。
-
-   - **Phase 4: MOSA Maintenance Hook (Automated Re-indexing)**
-     - 在 GC 完成後，**[Tool: run_command]** 執行維護腳本（正式列為 Step 8）：
-       ```bash
-       node "$HOME/.gemini/antigravity/skills/router-agent/mosa_maintenance.js"
-       ```
-     - 確保註冊表與分片保持同步，並更新全域狀態。
 
 # 跨 Agent 溝通協議 (強制)
 任何輸出必須包含：
@@ -113,33 +104,7 @@ category: Workflow
 - 路徑一律使用 `~/` 相對路徑或 Workspace Root 相對路徑。
 
 # 注意事項
+- 本 Agent 為純編排層，不執行具體業務。
 - 始終以 GEMINI.md 為最高執行準則，SKILL.md 為底層方法論。
 - 輸出遵循 ff 模式（僅輸出改動部分）與 GEMINI.md Point form 要求。
 - 若用戶表達滿意，確認 auto-skill Step 5（經驗記錄）已執行。
-
-# 專屬工作流模式 (Specialized Workflow Modes)
-
-## 1. 驗收驅動模式 (Acceptance Verification Mode)
-當任務包含明確驗收標準 (DoD) 時，強制啟動此模式：
-- **核心準則**: 不以「代碼變更」為終點，僅以「驗收證據證明」為完成依據。
-- **狀態機生命週期**: `intake` -> `gated` -> `executing` -> `review-loop` -> `deploy-verify` -> `accepted`/`escalated`。
-- **終止條件**: 僅在所有驗收條目均獲得對應命令/日誌/API 回傳證據 (Evidence) 時，狀態方可轉為 `accepted`。
-- **升級機制**: 超過 2 輪 DoD 驗收失敗，或缺少必要外部依賴時，強制轉移為 `escalated` 狀態並暫停。
-
-## 2. 多代理人協調模式 (Multi-Agent Coordination Mode)
-當涉及 3 個以上 Sub-Agents 協同或高風險重疊任務時啟動：
-- **身份防護 (Not-Blocks)**: 編排器絕不親自寫代碼、做調研或測試，所有任務均需委派。
-- **防重複檢查**: 委派前，讀取任務註冊表，對比當前進行中任務之相似度。相似度 >= 55% 時自動合併，跳過重複分發。
-- **心跳監控**: 每 30 分鐘執行心跳檢查。若有 Sub-Agent 閒置超過 30 分鐘，立即重發任務或重新指派。
-- **品質驗收閘門**:
-  1. 檢查檔案是否確實修改 (`git diff --stat`)
-  2. 檢查測試是否通過
-  3. 掃描是否有洩漏的金鑰/Tokens
-  4. 驗證編譯是否成功
-
-## 3. 網絡協同模式 (Networked Intelligence Mode)
-當任務涉及多個能力套件聯動（如同時涉及前端 UI 與搜尋 SEO 最佳化）時啟動：
-- **依賴拓撲建立**: 自動構建 DAG 有向圖，將依賴前置的技能（如 `UI_SUITE`）排在前方優先執行。
-- **共享上下文傳遞**: 利用 `01_Work/context_bus.json` 作為運行期中介暫存區，動態寫入並注入跨代理人之資料欄位。
-- **全局驗收檢查**: 由 `audit_agent` 針對協同網絡中所有受影響的檔案執行大一統審核，以確保無跨模組破壞或衝突。
-

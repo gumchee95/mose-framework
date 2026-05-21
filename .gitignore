@@ -1,0 +1,13 @@
+# Local MOSA Workspace directories
+00_System/
+01_Work/
+02_Output/
+graphify-out/
+.system_generated/
+
+# Logs and temp files
+*.log
+*.tmp
+.DS_Store
+dist/
+mosa-framework-v2.5.zip

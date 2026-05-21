@@ -27,26 +27,23 @@ category: Workflow
 **觸發指令 (Trigger Event)：**
 - 必須等待 orchestrator_agent 發送精煉後的指令：`[Load Skill Request: <用戶意圖摘要>]` 後，才開始執行檢索。
 
-**技能檢索流程 (High-Efficiency Reading Protocol)：**
+**技能檢索流程（必須主動調用 Tool）：**
 
-**Phase 1: Persistent Cache Check**
-1. **[Tool: view_file]** 讀取 `00_System/routing_cache.json`。
-2. 比對當前用戶意圖的 Hash 值或關鍵詞。若命中且信心度高，直接跳轉至 Phase 4。
+**Phase 1: Registry.json Load & Validate**
+1. **[Tool: view_file]** 嘗試讀取 registry.json（優先順序）：
+   - `~/.gemini/antigravity/skills/skills_registry.json`（全局優先）
+   - 或當前 Workspace 內的 `skills/skills_registry.json` / `auto-skill/skills_registry.json`
 
-**Phase 2: Sharded Search (Mosa Search)**
-3. 若 Cache 未命中，**[Tool: run_command]** 執行檢索腳本：
+2. **[Validation Check]** - 若成功讀取，進行以下檢查：
+   - **JSON 有效性**：嘗試解析 JSON。若無效，記錄錯誤並進入 Phase 2 Fallback。
+   - **版本戳檢查**：檢查 registry.json 頂部是否有 `version: YYYYMMDD` 戳記。若 >7 天，標記為 `STALE`。
+   - **循環參考掃描**：檢查任何 skill 的依賴鏈中是否有循環（若有則移除該 skill）。
+
+**Phase 2: Fallback (若 Phase 1 失敗)**
+3. 若 registry.json 無效、不存在或過舊，**[Tool: run_command]** 掃描 `~/.gemini/antigravity/skills/` 目錄：
    ```bash
-   node "$HOME/.gemini/antigravity/skills/router-agent/mosa_search.js" "<用戶意圖摘要>"
+   find ~/.gemini/antigravity/skills/ -name "*.md" -type f | head -50
    ```
-4. 該腳本僅返回 Top 3 技能的 Metadata 與路徑，嚴禁讀取全量 JSON。
-
-**Phase 3: Skill Skeletonization (Token Shield)**
-5. 對於選出的技能，**嚴禁直接 view_file 全文**。
-6. **[Tool: run_command]** 執行骨架化腳本：
-   ```bash
-   node "$HOME/.gemini/antigravity/skills/router-agent/mosa_skeleton.js" <SKILL_PATH>
-   ```
-7. 根據返回的 `outline` (目錄) 與 `line range` (行數區間)，決定是否需要精準讀取特定 SOP 段落。
 
 
 # 標準輸出協議 (Return Pointer Protocol)
