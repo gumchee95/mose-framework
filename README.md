@@ -21,23 +21,23 @@ Below is the execution topology and how the different components interact within
 ```mermaid
 graph TD
     User(("🧑 User Request")) --> Host["💻 Host Agent (Context Sniffing)"]
-    Host -- Checks rules --> GEMINI["📜 GEMINI.md (Global Rules)"]
-    Host --> Orch["🧠 Orchestrator Agent (Layer A/B)"]
+    Host -- "Checks rules" --> GEMINI["📜 GEMINI.md (Global Rules)"]
+    Host --> Orch["🧠 Orchestrator Agent"]
     
-    subgraph Routing & Delegation
+    subgraph Routing_and_Delegation ["Routing & Delegation"]
         Orch -- "Intent & Keywords" --> Router["🧭 Router Agent"]
-        Router -- "Queries" --> Registry[("🗂️ skills_registry.json")]
+        Router -- "Queries" --> Registry[("🗂️ skills/skills_registry.json")]
         Router -- "Returns Pointers" --> Orch
     end
 
-    subgraph Execution (Layer C)
+    subgraph Execution_Layer_C ["Execution (Layer C)"]
         Orch -- "Delegates SOP" --> Coder["👨‍💻 Coder Agent"]
         Orch -- "Delegates SOP" --> Admin["💼 Admin Agent"]
         Orch -- "Delegates SOP" --> Design["🎨 Design Agent"]
         Orch -- "Delegates SOP" --> Market["📈 Market Agent"]
     end
     
-    subgraph Evolution & Maintenance
+    subgraph Evolution_and_Maintenance ["Evolution & Maintenance"]
         Auto["⚙️ Auto-Skill"] -- "Extracts Experience" --> KB[("📚 Knowledge Base")]
         Creator["🏗️ Skill-Creator & Architect"] -- "Builds New Skills" --> SkillsDir["📂 skills/"]
         Distiller["🗜️ Registry Distiller"] -- "Compiles & Updates" --> Registry
@@ -48,17 +48,52 @@ graph TD
 
 ---
 
+## 🔍 Step-by-Step Lifecycle: From Input to Output
+
+MOSA works via a strict, multi-layer progression that turns a user request into highly verified deliverables while consuming minimum tokens.
+
+```
+[User Input] ➔ [Sniffing & Shield] ➔ [Routing & DAG] ➔ [Shared Memory Execution] ➔ [Audit & Refinement] ➔ [GC & Output]
+```
+
+### 1️⃣ The Input & Initialization Phase
+* **Context Sniffing (Step 0 & 1)**: When a request is received, the Host Agent asserts the workspace structure (`00_System/`, `01_Work/`, `02_Output/`). If they do not exist, it runs the **Bootstrap Agent** to initialize them.
+* **Token Shield Activation**: The Host checks for the existence of `graphify-out/GRAPH_REPORT.md` (which maps the file graph). If present, the Token Shield locks the codebase's **God Nodes** (critical entry files). Sub-agents are restricted to scanning these nodes, skipping blind directory lookups and saving **~75% of discovery tokens**.
+* **Version Check**: The global rules (`GEMINI.md` and `auto-skill`) are examined. If the local version stamp differs by more than 24 hours from the workspace, they are reloaded.
+
+### 2️⃣ The Routing Phase (Layer B)
+* **Keyword Decomposition**: The **Orchestrator Agent** splits the user's prompt into atomic keywords (e.g., `"Design high-converting landing page"` is decomposed into keywords like `marketing-psychology`, `frontend-design`, `seo-suite`).
+* **Skill Querying**: The **Router Agent** intercepts these keywords. Instead of reading all files in the `skills/` directory, it searches the distilled `skills/skills_registry.json` index.
+* **Metadata Resolution**: The Router looks up matching skills and parses their dependency fields (`requires` and `suggests` arrays) to determine the correct order of operations.
+* **Pointers Return**: The Router returns matching skill path pointers (e.g., `skills/seo-suite/SKILL.md`) to the Orchestrator.
+
+### 3️⃣ The Planning & DAG Phase (Layer C/D)
+* **DAG Construction**: The Orchestrator takes the skill pointers and chains them into a **Directed Acyclic Graph (DAG)** of execution steps.
+* **Blackboard Initialization**: The Orchestrator sets up the stateless Shared Memory Bus (`01_Work/context_bus.json`) and session tracker (`01_Work/session_state.json`).
+* **Ambiguity Convergence (Inversion Pattern)**: If the prompt is fuzzy, the Orchestrator invokes the `project-planner` skill to halt execution and ask the user targeted questions. It converges the inputs into exact parameters (e.g., `theme`, `budget`, `audience`), which are immediately posted to the Context Bus.
+
+### 4️⃣ The Shared Memory Execution Phase (Layer C/D)
+* **SOP Execution**: The Orchestrator delegates tasks to specialized sub-agents (`coder-agent`, `design-agent`, `market-agent`, `admin-agent`) according to the DAG order.
+* **Pure Execution Engines**: These sub-agents have **no hardcoded business logic**. They are pure execution engines that use the `view_file` tool to load instructions dynamically from the assigned `SKILL.md` file.
+* **Context Bus Handoff**: As each agent finishes, the Orchestrator extracts its output variables and writes them to the `context_bus.json` shared memory bus. Pointers to larger output files (like CSVs or codebases) are stored on the bus, and subsequent agents read these variables via `[Shared_Context: ...]` headers, preventing the need to re-read the original chat history and saving **~95% of handoff tokens**.
+
+### 5️⃣ The Auditing & Refinement Phase (Layer E)
+* **Drift Control**: The **Audit Agent** runs concurrently. It monitors the `Agent_Activation_Log.md` and `session_state.json` to detect:
+  * Infinite loops or redundant tool calls.
+  * Departures from the core `prompt_stack.md` objectives.
+  * Violations of the "Pointers Only" output protocol.
+* **Self-Healing**: If a sub-agent fails or drifts, the Audit Agent halts execution, rewrites the immediate SOP instruction with a corrective patch, and restarts the task.
+
+### 6️⃣ The Output & Garbage Collection (GC) Phase
+* **Deliverable Solidification**: When the checklist in `01_Work/task.md` is fully completed, the final verified results (documents, code, mockups, audit reports) are moved to the `02_Output/` directory.
+* **Garbage Collection**: The Orchestrator purges `01_Work/session_state.json` and temp files to free up local storage.
+* **Long-Term Memory Capture**: The `auto-skill` component prompts the user: *"Would you like to record this experience?"* Useful tips or configurations are distilled and appended to the workspace memory anchor: `00_System/prompt_stack.md`.
+
+---
+
 ## 💾 The Shared Memory Bus: `context_bus.json`
 
 To prevent massive token bloat during multi-agent handoffs, MOSA implements a stateless **Shared Memory Bus** (`01_Work/context_bus.json`).
-
-### How It Works
-
-Instead of feeding an agent the entire historical chat context of what other agents did, agents output structured JSON values (such as file pointers, configuration metrics, schema definitions).
-
-1. **Write**: When an Execution Sub-Agent (e.g., `market_agent`) finishes its task, the **Orchestrator** extracts its output variables and writes them to `01_Work/context_bus.json`.
-2. **Read & Inject**: When the Orchestrator assigns a task to the next agent in the pipeline (e.g., `design_agent`), it reads `context_bus.json` and injects it as a compact `[Shared_Context: ...]` header.
-3. **Pointers Only**: Large data outputs (like large tables or code snippets) are saved to disk, and only their file path pointers are put on the bus.
 
 ### Concrete Example of `context_bus.json`
 
