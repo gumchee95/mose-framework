@@ -1,0 +1,394 @@
+[
+    {
+        "skill_id": "API_EXPERT",
+        "filepath": "~/.gemini/antigravity/skills/api-expert/SKILL.md",
+        "category": "Core",
+        "tags": ["api", "rest", "integration", "endpoint"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "BRAINSTORMING_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/brainstorming-agent/SKILL.md",
+        "category": "Core",
+        "tags": ["ideation", "brainstorm", "creative", "strategy"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "DOC_PIPELINE",
+        "filepath": "~/.gemini/antigravity/skills/doc-pipeline/SKILL.md",
+        "category": "Core",
+        "tags": ["document", "pipeline", "automation", "workflow"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "PROJECT_PLANNER",
+        "filepath": "~/.gemini/antigravity/skills/project-planner/SKILL.md",
+        "category": "Core",
+        "tags": ["project", "planning", "gantt", "milestone"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "REPORT_GENERATOR",
+        "filepath": "~/.gemini/antigravity/skills/report-generator/SKILL.md",
+        "category": "Core",
+        "tags": ["report", "summary", "output", "formatting"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "KYC_DATA_FETCHER",
+        "filepath": "~/.gemini/antigravity/skills/kyc-data-fetcher/SKILL.md",
+        "category": "Admin",
+        "tags": ["kyc", "due-diligence", "sme", "corporate", "screening", "fetcher"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "ALGORITHMIC_ART",
+        "filepath": "~/.gemini/antigravity/skills/algorithmic-art/SKILL.md",
+        "category": "Design",
+        "tags": ["p5js", "generative", "art", "particles", "flow-field"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "AUTO_SKILL",
+        "filepath": "~/.gemini/antigravity/skills/auto-skill/SKILL.md",
+        "category": "Core",
+        "tags": ["bootstrap", "knowledge-base", "experience", "memory", "self-evolution"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "BRAND_GUIDELINES",
+        "filepath": "~/.gemini/antigravity/skills/brand-guidelines/SKILL.md",
+        "category": "Design",
+        "tags": ["brand", "identity", "logo", "color-palette", "typography"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "CANVAS_DESIGN",
+        "filepath": "~/.gemini/antigravity/skills/canvas-design/SKILL.md",
+        "category": "Design",
+        "tags": ["canvas", "layout", "composition", "visual", "static"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "CODE_REVIEW",
+        "filepath": "~/.gemini/antigravity/skills/code-review/SKILL.md",
+        "category": "Tech",
+        "tags": ["code-review", "lint", "best-practice", "security"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "COMPLIANCE_FRAMEWORK",
+        "filepath": "~/.gemini/antigravity/skills/compliance-framework/SKILL.md",
+        "category": "Admin",
+        "tags": ["compliance", "regulation", "audit", "governance", "policy"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "DATA_ANALYTICS_CORE",
+        "filepath": "~/.gemini/antigravity/skills/data-analytics-core/SKILL.md",
+        "category": "Tech",
+        "tags": ["data", "analytics", "eda", "visualization", "pandas", "statistics"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "DOC_COAUTHORING",
+        "filepath": "~/.gemini/antigravity/skills/doc-coauthoring/SKILL.md",
+        "category": "Core",
+        "tags": ["document", "collaboration", "coauthoring", "google-docs"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "DOCX",
+        "filepath": "~/.gemini/antigravity/skills/docx/SKILL.md",
+        "category": "Core",
+        "tags": ["docx", "word", "microsoft", "export"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "FRONTEND_DESIGN",
+        "filepath": "~/.gemini/antigravity/skills/frontend-design/SKILL.md",
+        "category": "Design",
+        "tags": ["frontend", "ui", "ux", "react", "css", "html", "responsive"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "HR_STRATEGY",
+        "filepath": "~/.gemini/antigravity/skills/hr-strategy/SKILL.md",
+        "category": "Admin",
+        "tags": ["hr", "recruitment", "talent", "performance", "jd"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "INTERNAL_COMMS",
+        "filepath": "~/.gemini/antigravity/skills/internal-comms/SKILL.md",
+        "category": "Admin",
+        "tags": ["internal", "communications", "memo", "announcement", "newsletter"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "MCP_BUILDER",
+        "filepath": "~/.gemini/antigravity/skills/mcp-builder/SKILL.md",
+        "category": "Tech",
+        "tags": ["mcp", "server", "tool-integration", "fastmcp", "api"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "MENTAL_MODELS",
+        "filepath": "~/.gemini/antigravity/skills/mental-models/SKILL.md",
+        "category": "Core",
+        "tags": ["thinking", "mental-model", "framework", "decision", "first-principles"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "MOSA_HARMONIZER",
+        "filepath": "~/.gemini/antigravity/skills/mosa-harmonizer/SKILL.md",
+        "category": "Core",
+        "tags": ["mosa", "audit", "harmonizer", "alignment", "architecture", "framework"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "PDF",
+        "filepath": "~/.gemini/antigravity/skills/pdf/SKILL.md",
+        "category": "Core",
+        "tags": ["pdf", "extract", "parse", "distill"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "PPTX",
+        "filepath": "~/.gemini/antigravity/skills/pptx/SKILL.md",
+        "category": "Core",
+        "tags": ["pptx", "powerpoint", "presentation", "slides"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "PROJECT_MANAGEMENT_CORE",
+        "filepath": "~/.gemini/antigravity/skills/project-management-core/SKILL.md",
+        "category": "Core",
+        "tags": ["project", "management", "tracking", "milestone", "agile"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "SKILL_ARCHITECT",
+        "filepath": "~/.gemini/antigravity/skills/skill-architect/SKILL.md",
+        "category": "Core",
+        "tags": ["skill", "architect", "meta", "design", "yaml"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "SKILL_CREATOR",
+        "filepath": "~/.gemini/antigravity/skills/skill-creator/SKILL.md",
+        "category": "Core",
+        "tags": ["skill", "create", "template", "scaffold"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "SLACK_GIF_CREATOR",
+        "filepath": "~/.gemini/antigravity/skills/slack-gif-creator/SKILL.md",
+        "category": "Design",
+        "tags": ["slack", "gif", "animation", "sticker"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "STRATEGIC_FINANCE",
+        "filepath": "~/.gemini/antigravity/skills/strategic-finance/SKILL.md",
+        "category": "Financial",
+        "tags": ["finance", "budget", "roi", "cash-flow", "valuation", "dcf"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "THEME_FACTORY",
+        "filepath": "~/.gemini/antigravity/skills/theme-factory/SKILL.md",
+        "category": "Design",
+        "tags": ["theme", "dark-mode", "color", "design-system", "tokens"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "THOUGHT_DISTILLER",
+        "filepath": "~/.gemini/antigravity/skills/thought-distiller/SKILL.md",
+        "category": "Core",
+        "tags": ["distill", "pdf", "extraction", "meta-logic", "cognitive"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "TRADING_EXPERT",
+        "filepath": "~/.gemini/antigravity/skills/trading-expert/SKILL.md",
+        "category": "Financial",
+        "tags": ["trading", "stock", "us-market", "nyse", "nasdaq", "technical-analysis", "pine-script", "swing"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "TRADING_EXPERT_HS",
+        "filepath": "~/.gemini/antigravity/skills/trading-expert-hs/SKILL.md",
+        "category": "Financial",
+        "tags": ["trading", "hong-kong", "hsi", "china", "a-shares", "h-shares", "mainland", "swing"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "WEB_ARTIFACTS_BUILDER",
+        "filepath": "~/.gemini/antigravity/skills/web-artifacts-builder/SKILL.md",
+        "category": "Design",
+        "tags": ["web", "html", "interactive", "artifact", "dashboard"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "WEBAPP_TESTING",
+        "filepath": "~/.gemini/antigravity/skills/webapp-testing/SKILL.md",
+        "category": "Tech",
+        "tags": ["testing", "qa", "browser", "e2e", "validation"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "XLSX",
+        "filepath": "~/.gemini/antigravity/skills/xlsx/SKILL.md",
+        "category": "Core",
+        "tags": ["xlsx", "excel", "spreadsheet", "data"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "SCRAPING_FAILURE_HANDLER",
+        "filepath": "~/.gemini/antigravity/skills/scraping-failure-handler/SKILL.md",
+        "category": "Tech",
+        "tags": ["scraping", "resilience", "circuit-breaker", "failure", "browser-fallback"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "MOSA_GRAPH_BUILDER",
+        "filepath": "~/.gemini/antigravity/skills/mosa-graph-builder/SKILL.md",
+        "category": "Core",
+        "tags": ["mosa", "topology", "graph", "mermaid", "architecture"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "GAS_WEBAPP_ARCHITECT",
+        "filepath": "~/.gemini/antigravity/skills/gas-webapp-architect/SKILL.md",
+        "category": "Framework",
+        "tags": ["gas", "google-apps-script", "webapp", "spreadsheet", "caching", "scanner"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "AUTOMATED_DATA_CLEANER",
+        "filepath": "~/.gemini/antigravity/skills/automated-data-cleaner/SKILL.md",
+        "category": "Utility",
+        "tags": ["data-cleaning", "regex", "standardization"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "BASE_DISTILLER",
+        "filepath": "~/.gemini/antigravity/skills/base-distiller/SKILL.md",
+        "category": "Utility",
+        "tags": ["distill", "registry", "maintenance"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "ORCHESTRATOR_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/orchestrator-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "orchestrator", "task-decomposition"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "ROUTER_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/router-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "router", "skill-retrieval"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "AUDIT_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/audit-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "audit", "compliance", "efficiency"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "CODER_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/coder-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "coder", "execution", "tech"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "ADMIN_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/admin-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "admin", "hr", "operations"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "DESIGN_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/design-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "design", "ui", "ux", "visual"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "MARKET_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/market-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "market", "finance", "analysis"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "GOOGLE_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/google-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "google", "workspace", "automation"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "MICROSOFT_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/microsoft-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["mosa", "microsoft", "office", "automation"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "WF_AGENT_OS_SETUP",
+        "filepath": "~/.gemini/antigravity/skills/agent-os-setup/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "setup", "scaffolding"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "BOOTSTRAP_AGENT",
+        "filepath": "~/.gemini/antigravity/skills/bootstrap-agent/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "bootstrap", "initialization"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "WF_PROJECT_LAUNCH",
+        "filepath": "~/.gemini/antigravity/skills/project-launch/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "project", "launch"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "WF_SIMPLE_TASK",
+        "filepath": "~/.gemini/antigravity/skills/simple-workflow/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "simple", "task"],
+        "complexity": "Low"
+    },
+    {
+        "skill_id": "WF_INVESTMENT_COMMITTEE",
+        "filepath": "~/.gemini/antigravity/skills/run-investment-committee/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "investment", "committee"],
+        "complexity": "High"
+    },
+    {
+        "skill_id": "WF_PLACEMENT_DRIVE",
+        "filepath": "~/.gemini/antigravity/skills/run-placement-drive/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "placement", "drive"],
+        "complexity": "Medium"
+    },
+    {
+        "skill_id": "WF_PDF_TO_EXCEL",
+        "filepath": "~/.gemini/antigravity/skills/pdf-to-excel-export/SKILL.md",
+        "category": "Workflow",
+        "tags": ["workflow", "pdf", "excel", "export"],
+        "complexity": "Medium"
+    }
+]

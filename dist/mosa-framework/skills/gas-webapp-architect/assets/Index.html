@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sticker Collection Fast Entry</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-hover: #1d4ed8;
+      --secondary: #eff6ff;
+      --bg: #f8fafc;
+      --surface: #ffffff;
+      --text: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --success: #10b981;
+      --success-bg: #d1fae5;
+      --error: #ef4444;
+      --error-bg: #fee2e2;
+    }
+    
+    body {
+      font-family: 'Roboto', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding-top: 50px;
+    }
+
+    .hero-banner {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 30vh;
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+      z-index: -1;
+      clip-path: polygon(0 0, 100% 0, 100% 80%, 0% 100%);
+    }
+
+    /* Sync Overlay */
+    .sync-overlay {
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(255, 255, 255, 0.9);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      transition: opacity 0.4s ease;
+    }
+
+    .sync-text {
+      margin-top: 15px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--primary);
+      letter-spacing: 1px;
+    }
+
+    .container {
+      background: var(--surface);
+      border-radius: 16px;
+      padding: 40px;
+      width: 90%;
+      max-width: 450px;
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.08);
+      position: relative;
+    }
+
+    h2 {
+      margin-top: 0;
+      font-family: 'Outfit', sans-serif;
+      font-size: 26px;
+      font-weight: 800;
+      color: var(--text);
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .input-group {
+      margin-bottom: 24px;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 16px 20px;
+      font-size: 18px;
+      font-family: 'Outfit', sans-serif;
+      font-weight: 600;
+      color: var(--text);
+      background-color: var(--secondary);
+      border: 2px solid var(--secondary);
+      border-radius: 12px;
+      outline: none;
+      transition: all 0.2s ease;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    input[type="text"]:focus {
+      border-color: var(--primary);
+      background-color: var(--surface);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.1);
+    }
+
+    input[type="text"]::placeholder {
+      font-weight: 400;
+      letter-spacing: normal;
+      color: #94a3b8;
+    }
+
+    .spinner {
+      margin: 0 auto;
+      border: 3px solid var(--secondary);
+      border-top: 3px solid var(--primary);
+      border-radius: 50%;
+      width: 36px;
+      height: 36px;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    
+    /* Result Card Layout */
+    .result-card {
+      display: none;
+      margin-top: 24px;
+      border-radius: 12px;
+      background-color: var(--surface);
+      border: 1px solid var(--border);
+      text-align: left;
+      overflow: hidden;
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(10px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    .result-header {
+      background-color: var(--secondary);
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .result-header .name {
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .result-header .id {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      background: #e0e7ff;
+      padding: 4px 10px;
+      border-radius: 20px;
+    }
+
+    .result-body {
+      padding: 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    .data-group {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .data-group .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .data-group .value {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--text);
+    }
+
+    .highlight-value {
+      color: var(--primary) !important;
+      font-weight: 700 !important;
+      font-family: 'Outfit', sans-serif;
+      font-size: 18px !important;
+    }
+
+    #resStatus {
+      margin: 0 24px 24px 24px;
+      padding: 14px;
+      border-radius: 8px;
+      text-align: center;
+      font-weight: 600;
+      font-size: 14px;
+      background-color: var(--success-bg);
+      color: var(--success);
+      border: 1px solid #a7f3d0;
+    }
+
+    .error-msg {
+      margin-top: 20px;
+      background-color: var(--error-bg);
+      color: var(--error);
+      padding: 18px;
+      border-radius: 12px;
+      border: 1px solid #fecaca;
+      font-size: 15px;
+      font-weight: 500;
+      display: none;
+      text-align: center;
+      line-height: 1.5;
+      animation: shake 0.4s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-5px); }
+      75% { transform: translateX(5px); }
+    }
+    
+    .status-badge {
+      position: absolute;
+      top: -15px; right: 24px;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--surface);
+      color: var(--primary);
+      padding: 6px 12px;
+      border-radius: 20px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      border: 1px solid var(--border);
+    }
+    
+    .serial-group {
+      display: none;
+      padding: 20px 24px;
+      background: var(--secondary);
+      border-top: 1px solid var(--border);
+      animation: slideUp 0.3s ease;
+    }
+    .serial-group input {
+      margin-bottom: 12px;
+    }
+    .serial-buttons {
+      display: flex;
+      gap: 10px;
+    }
+    .btn {
+      flex: 1;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      font-family: 'Outfit', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .btn-confirm {
+      background: var(--primary);
+      color: white;
+    }
+    .btn-confirm:hover {
+      background: var(--primary-hover);
+    }
+    .btn-cancel {
+      background: var(--error-bg);
+      color: var(--error);
+    }
+    .btn-cancel:hover {
+      background: #fca5a5;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hero-banner"></div>
+
+  <div id="syncOverlay" class="sync-overlay">
+    <div class="spinner"></div>
+    <div class="sync-text">Loading Database...</div>
+  </div>
+
+  <div class="container">
+    <div class="status-badge" id="cacheStatus">Loading...</div>
+    <h2>Sticker Scanner</h2>
+    <div class="input-group">
+      <input type="text" id="studentId" placeholder="Scan Barcode here..." autocomplete="off">
+    </div>
+    
+    <div class="error-msg" id="errorMsg"></div>
+
+    <div class="result-card" id="resultCard">
+      <div class="result-header">
+        <span class="name" id="resName">-</span>
+        <span class="id" id="resId">-</span>
+      </div>
+      <div class="result-body">
+        <div class="data-group">
+          <span class="label">Vehicle Type</span>
+          <span class="value" id="resVehicle">-</span>
+        </div>
+        <div class="data-group">
+          <span class="label">Vehicle No</span>
+          <span class="value" id="resVehicleNo">-</span>
+        </div>
+        <div class="data-group">
+          <span class="label">Ballet No</span>
+          <span class="value" id="resBallet">-</span>
+        </div>
+      </div>
+      <div class="serial-group" id="serialGroup">
+        <div class="label" style="font-size:12px; color:var(--text-muted); text-transform:uppercase; font-weight:600; margin-bottom:8px;">Enter Serial Number</div>
+        <input type="text" id="serialInput" placeholder="Scan or type serial..." autocomplete="off">
+        <div class="serial-buttons">
+          <button class="btn btn-cancel" onclick="cancelSerial()">Cancel</button>
+          <button class="btn btn-confirm" onclick="submitSerial()">Confirm</button>
+        </div>
+      </div>
+      <div id="resStatus" style="display: none;"></div>
+    </div>
+  </div>
+
+  <script>
+    window.studentCache = [];
+
+    let currentStudent = null;
+
+    window.onload = function() {
+      google.script.run
+        .withSuccessHandler(function(response) {
+          if(response.success) {
+            window.studentCache = response.data;
+            document.getElementById("cacheStatus").innerText = "Records: " + window.studentCache.length;
+            
+            const overlay = document.getElementById("syncOverlay");
+            overlay.style.opacity = "0";
+            setTimeout(() => { 
+              overlay.style.display = "none"; 
+              document.getElementById("studentId").focus();
+            }, 400);
+          } else {
+            alert("Database Sync Failed: " + response.message);
+          }
+        })
+        .withFailureHandler(function(error) {
+          alert("Network Error: " + error.message);
+        })
+        .getAllStudents();
+    };
+
+    document.getElementById("studentId").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        handleEntry();
+      }
+    });
+
+    // 自动侦测：如果达到 7 个字符自动提交 (针对不自带 Enter 的扫码枪)
+    document.getElementById("studentId").addEventListener("input", function() {
+      if (this.value.trim().length === 7) {
+        handleEntry();
+      }
+    });
+
+    document.getElementById("serialInput").addEventListener("keypress", function(event) {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        submitSerial();
+      }
+    });
+
+    // 自动侦测：序列号达到 7 个字符自动提交
+    document.getElementById("serialInput").addEventListener("input", function() {
+      if (this.value.trim().length === 7) {
+        submitSerial();
+      }
+    });
+
+    function handleEntry() {
+      const inputField = document.getElementById("studentId");
+      const sid = inputField.value.trim().toUpperCase();
+      if (!sid) return;
+
+      document.getElementById("errorMsg").style.display = "none";
+      document.getElementById("resultCard").style.display = "none";
+      document.getElementById("serialGroup").style.display = "none";
+      document.getElementById("resStatus").style.display = "none";
+      
+      const student = window.studentCache.find(s => s.studentId === sid);
+
+      inputField.value = ""; 
+
+      if (student) {
+        if (student.trackingLog && student.trackingLog !== "") {
+          const errorEl = document.getElementById("errorMsg");
+          errorEl.innerHTML = `<strong>⚠️ ALREADY COLLECTED</strong><br>Collected at: ${student.trackingLog}<br>Serial: ${student.serialNumber || 'N/A'}`;
+          errorEl.style.display = "block";
+          
+          document.querySelector(".hero-banner").style.background = "linear-gradient(135deg, #991b1b 0%, #ef4444 100%)";
+          setTimeout(() => { 
+            document.querySelector(".hero-banner").style.background = "linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)"; 
+          }, 800);
+          inputField.focus();
+          return;
+        }
+
+        currentStudent = student;
+        document.getElementById("resName").innerText = student.name;
+        document.getElementById("resId").innerText = student.studentId;
+        document.getElementById("resVehicle").innerText = student.vehicleType;
+        document.getElementById("resVehicleNo").innerText = student.vehicleNo;
+        document.getElementById("resBallet").innerText = student.balletNo;
+        
+        document.getElementById("resultCard").style.display = "block";
+        document.getElementById("serialGroup").style.display = "block";
+        
+        const serialInput = document.getElementById("serialInput");
+        serialInput.value = "";
+        serialInput.focus();
+          
+      } else {
+        const errorEl = document.getElementById("errorMsg");
+        errorEl.innerHTML = "<strong>❌ Not Found</strong><br>Student ID does not exist in the database.";
+        errorEl.style.display = "block";
+        inputField.focus();
+      }
+    }
+
+    function cancelSerial() {
+      currentStudent = null;
+      document.getElementById("resultCard").style.display = "none";
+      document.getElementById("serialGroup").style.display = "none";
+      document.getElementById("studentId").focus();
+    }
+
+    function submitSerial() {
+      if (!currentStudent) return;
+      
+      const serialInput = document.getElementById("serialInput");
+      const serialVal = serialInput.value.trim().toUpperCase();
+      
+      if (!serialVal) {
+         serialInput.focus();
+         return;
+      }
+      
+      // Prevent duplicate serial numbers
+      const duplicate = window.studentCache.find(s => s.serialNumber && s.serialNumber.toUpperCase() === serialVal && s.studentId !== currentStudent.studentId);
+      if (duplicate) {
+         const errorEl = document.getElementById("errorMsg");
+         errorEl.innerHTML = `<strong>⚠️ DUPLICATE SERIAL</strong><br>This Serial Number is already used by:<br>${duplicate.studentId} (${duplicate.name})`;
+         errorEl.style.display = "block";
+         
+         document.querySelector(".hero-banner").style.background = "linear-gradient(135deg, #991b1b 0%, #ef4444 100%)";
+         setTimeout(() => { 
+            document.querySelector(".hero-banner").style.background = "linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%)"; 
+         }, 800);
+         
+         serialInput.value = "";
+         serialInput.focus();
+         return;
+      }
+
+      // Success
+      document.getElementById("errorMsg").style.display = "none";
+      document.getElementById("serialGroup").style.display = "none"; 
+      
+      // 格式化时间，去掉繁杂的 GMT 时区文字
+      const d = new Date();
+      const localTime = d.getFullYear() + "-" + 
+                        String(d.getMonth() + 1).padStart(2, '0') + "-" + 
+                        String(d.getDate()).padStart(2, '0') + " " + 
+                        String(d.getHours()).padStart(2, '0') + ":" + 
+                        String(d.getMinutes()).padStart(2, '0') + ":" + 
+                        String(d.getSeconds()).padStart(2, '0');
+                        
+      const statusEl = document.getElementById("resStatus");
+      statusEl.innerText = `✅ Recorded: Serial [${serialVal}] at ${localTime}`;
+      statusEl.style.display = "block";
+
+      currentStudent.trackingLog = localTime;
+      currentStudent.serialNumber = serialVal;
+
+      google.script.run
+        .withFailureHandler(function(err){
+           console.error("Write-back failed for " + currentStudent.studentId + ": " + err.message);
+        })
+        .markAsCollected(currentStudent.rowIndex, currentStudent.studentId, serialVal);
+        
+      currentStudent = null;
+      document.getElementById("studentId").focus();
+    }
+  </script>
+</body>
+</html>

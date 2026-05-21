@@ -1,0 +1,13 @@
+{
+  "turn_count": 1,
+  "drift_threshold": 20,
+  "pipeline_trace": "Orchestrator > Router > [Self]",
+  "bundle_target": "dist/mosa-framework",
+  "sensitive_patterns": [
+    "AI_KEY",
+    "API_KEY",
+    "PASSWORD",
+    "SECRET",
+    "C:/Users/USER"
+  ]
+}
